@@ -95,6 +95,10 @@ pub struct Config<'a> {
     pub label: &'a str,
     #[cfg(windows)]
     pub strip_cr: bool,
+    /// Join the paths a recursive search walks with `/` rather than `\`,
+    /// as `UUTILS_PATH_SEPARATOR=/` asks.
+    #[cfg(windows)]
+    pub forward_slashes: bool,
     pub binary_mode: BinaryMode,
     pub max_count: Option<u64>,
     pub before_context: usize,
@@ -416,6 +420,8 @@ pub fn uumain(args: impl uucore::Args) -> UResult<()> {
         label,
         #[cfg(windows)]
         strip_cr: !binary,
+        #[cfg(windows)]
+        forward_slashes: std::env::var_os("UUTILS_PATH_SEPARATOR").is_some_and(|v| v == "/"),
         binary_mode,
         max_count,
         before_context,
