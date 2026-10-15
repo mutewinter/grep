@@ -2136,6 +2136,18 @@ fn recursive_path_separator_forward_slash_files_with_matches() {
 }
 
 #[test]
+fn recursive_path_separator_slash_word() {
+    // MSYS2 and Git Bash rewrite a bare `/` value into their install folder.
+    let (scene, mut c) = ucmd();
+    scene.fixtures.mkdir_all("deep/sub");
+    scene.fixtures.write("deep/sub/c.txt", "grep me\n");
+    c.env("UUTILS_PATH_SEPARATOR", "slash")
+        .args(&["-rl", "grep", "deep"])
+        .succeeds()
+        .stdout_is("deep/sub/c.txt\n");
+}
+
+#[test]
 fn recursive_path_separator_other_values_keep_the_native_separator() {
     let (scene, mut c) = ucmd();
     scene.fixtures.mkdir_all("deep/sub");
